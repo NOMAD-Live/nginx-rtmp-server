@@ -42,10 +42,10 @@ RUN ./configure \
     --error-log-path=/var/log/nginx/error.log \
     --lock-path=/var/lock/nginx.lock \
     --pid-path=/var/run/nginx.pid \
+    --with-http_stub_status_module \
     --with-http_ssl_module \
     --with-ipv6 \
     --add-module=/tmp/nginx-rtmp-module
-#    --with-http_stub_status_module \
 
 RUN make && make install
 
