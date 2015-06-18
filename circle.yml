@@ -1,0 +1,23 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker info
+    - docker build -t cadesalaberry/nginx-rtmp-server .
+
+test:
+  override:
+    - docker run -d -p 80:80 -p 443:443 -p 1935:1935 cadesalaberry/nginx-rtmp-server; sleep 10
+    - timeout 1 bash -c 'cat < /dev/null > /dev/tcp/localhost/80'; echo $?
+    - timeout 1 bash -c 'cat < /dev/null > /dev/tcp/localhost/443'; echo $?
+    - timeout 1 bash -c 'cat < /dev/null > /dev/tcp/localhost/1935'; echo $?
+
+
+deployment:
+  hub:
+    branch: master
+    commands:
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push cadesalaberry/nginx-rtmp-server
