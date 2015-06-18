@@ -2,9 +2,6 @@ FROM ubuntu
 
 MAINTAINER cadesalaberry
 
-#ADD docker/install /install
-#RUN chmod 755 /install
-#RUN /install
 
 ENV NGINX_PATH=/etc/nginx
 ENV NGINX_VERSION=1.9.1
@@ -23,12 +20,10 @@ RUN apt-get update && apt-get install -y \
 RUN alias make="make -j$(nproc)"
 
 # Downloads nginx-rtmp-module.
-RUN mkdir /tmp/nginx-rtmp-module
-RUN wget https://github.com/arut/nginx-rtmp-module/archive/v${RTMP_VERSION}.tar.gz -O - | tar -zxf - --strip=1 -C /tmp/nginx-rtmp-module
+RUN mkdir -p /tmp/nginx-rtmp-module && wget https://github.com/arut/nginx-rtmp-module/archive/v${RTMP_VERSION}.tar.gz -O - | tar -zxf - --strip=1 -C /tmp/nginx-rtmp-module
 
 # Downloads nginx.
-RUN mkdir -p /tmp/nginx
-RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz -O - | tar -zxf - -C /tmp/nginx --strip=1
+RUN mkdir -p /tmp/nginx && wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz -O - | tar -zxf - -C /tmp/nginx --strip=1
 
 WORKDIR /tmp/nginx
 
@@ -68,6 +63,4 @@ WORKDIR ${NGINX_PATH}
 CMD ["nginx"]
 
 # Opens HTTP, HTTPS and RTMP ports.
-EXPOSE 80
-EXPOSE 443
-EXPOSE 1935
+EXPOSE 80 443 1935
